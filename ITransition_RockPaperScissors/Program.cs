@@ -6,47 +6,47 @@ namespace ITransition_RockPaperScissors
 {
     class Program
     {
-        private static byte[] currentKey = new byte[16];
-        private static byte[] currentHash;
-        private static RandomNumberGenerator generator = RandomNumberGenerator.Create();
-        private static HMACSHA256 hmac;
-        private static String[] choices;
+        private static byte[] CurrentKey = new byte[16];
+        private static byte[] CurrentHash;
+        private static RandomNumberGenerator Generator = RandomNumberGenerator.Create();
+        private static HMACSHA256 HMAC;
+        private static String[] Choices;
         static void Main(string[] args)
         {
-            choices = args;
+            Choices = args;
             CheckArguments();
             int chosen = GetCPUChoice();
-            currentHash = GetHashFromString(choices[chosen]);
+            CurrentHash = GetHashFromString(Choices[chosen]);
             int userChosen = GetUserChoice();
             WinnerCodes winner = DetermineWinner(chosen,userChosen);
-            Console.WriteLine($"Computer choice: {choices[chosen]}\r\nYour choice: {choices[userChosen]}");
+            Console.WriteLine($"Computer choice: {Choices[chosen]}\r\nYour choice: {Choices[userChosen]}");
             switch (winner)
             {
-                case WinnerCodes.CPU:
+                case WinnerCodes.Cpu:
                     Console.WriteLine("Computer won!");
                     break;
-                case WinnerCodes.USER:
+                case WinnerCodes.User:
                     Console.WriteLine("You won!");
                     break;
-                case WinnerCodes.DRAW:
+                case WinnerCodes.Draw:
                     Console.WriteLine("Its a draw!");
                     break;
             }
-            Console.WriteLine($"KEY: {BitConverter.ToString(currentKey).Replace("-", String.Empty)}");
+            Console.WriteLine($"KEY: {BitConverter.ToString(CurrentKey).Replace("-", String.Empty)}");
         }
         private static void CheckArguments()
         {
-            if ((choices.Length % 2) == 0 || choices.Length <= 1)
+            if ((Choices.Length % 2) == 0 || Choices.Length <= 1)
             {
                 Console.WriteLine("Необходимо передать нечетное количество параметров! Для игры необходимо больше 1 параметра!");
                 Environment.Exit(0);
             }
-            for (int i=0;i<choices.Length-1;i++)
+            for (int i=0;i< Choices.Length-1;i++)
             {
-                if (choices[i] == choices[i + 1])
+                if (Choices[i] == Choices[i + 1])
                 {
                     Console.WriteLine($"Параметры не должны быть одинаковыми!\r\n" +
-                        $"{choices[i]} == {choices[i+1]}");
+                        $"{Choices[i]} == {Choices[i+1]}");
                     Environment.Exit(0);
                 }
             }
@@ -55,24 +55,24 @@ namespace ITransition_RockPaperScissors
         private static int GetCPUChoice()
         {
             Random random = new Random();
-            int number = random.Next(0, choices.Length);
+            int number = random.Next(0, Choices.Length);
             return number;
         }
         private static byte[] GetHashFromString(String value)
         {
-            generator.GetBytes(currentKey);
-            hmac = new HMACSHA256(currentKey);
+            Generator.GetBytes(CurrentKey);
+            HMAC = new HMACSHA256(CurrentKey);
             byte[] choiceEncoded = Encoding.UTF8.GetBytes(value);
-            return hmac.ComputeHash(choiceEncoded);
+            return HMAC.ComputeHash(choiceEncoded);
         }
         private static void PrintWelcome()
         {
             Console.Clear();
-            Console.WriteLine($"HMAC: {BitConverter.ToString(currentHash).Replace("-", String.Empty)}");
+            Console.WriteLine($"HMAC: {BitConverter.ToString(CurrentHash).Replace("-", String.Empty)}");
             Console.WriteLine("Choices:");
-            for (int i = 0; i < choices.Length; i++)
+            for (int i = 0; i < Choices.Length; i++)
             {
-                Console.WriteLine($"[{i + 1}]{choices[i]}");
+                Console.WriteLine($"[{i + 1}]{Choices[i]}");
             }
             Console.WriteLine("[0]Exit");
         }
@@ -84,7 +84,7 @@ namespace ITransition_RockPaperScissors
             {
                 if(int.TryParse(Console.ReadLine(),out chosen))
                 {
-                    if (chosen > 0 && chosen <= choices.Length)
+                    if (chosen > 0 && chosen <= Choices.Length)
                     {
                         return chosen - 1;
                     }
@@ -94,22 +94,22 @@ namespace ITransition_RockPaperScissors
                 Console.Write("Неверно введен пункт меню! Повторите ввод: ");
             }
         }
-        private static WinnerCodes DetermineWinner(int CpuChoice,int UserChoice)
+        private static WinnerCodes DetermineWinner(int cpuChoice,int userChoice)
         {
-            if (CpuChoice == UserChoice) return WinnerCodes.DRAW;
-            int current = CpuChoice;
+            if (cpuChoice == userChoice) return WinnerCodes.Draw;
+            int current = cpuChoice;
             int distance = 0;
             while (true)
             {
-                if (current == UserChoice) break;
-                current = Previous(current);
+                if (current == userChoice) break;
+                current = GetPrevious(current);
                 distance++;
             }
-            if ((distance % 2) == 0) return WinnerCodes.USER; else return WinnerCodes.CPU;
+            if ((distance % 2) == 0) return WinnerCodes.User; else return WinnerCodes.Cpu;
         }
-        private static int Previous(int current)
+        private static int GetPrevious(int current)
         {
-            if ((current - 1) < 0) return choices.Length - 1;
+            if ((current - 1) < 0) return Choices.Length - 1;
             return current - 1;
         }
     }

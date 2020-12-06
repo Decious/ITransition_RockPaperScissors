@@ -6,8 +6,8 @@ namespace ITransition_RockPaperScissors
 {
     enum WinnerCodes
     {
-        CPU,
-        USER,
-        DRAW
+        Cpu,
+        User,
+        Draw
     }
 }
