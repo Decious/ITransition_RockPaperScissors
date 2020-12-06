@@ -17,10 +17,10 @@ namespace ITransition_RockPaperScissors
             CheckArguments();
             int chosen = GetCPUChoice();
             CurrentHash = GetHashFromString(Choices[chosen]);
+            PrintWelcome();
             int userChosen = GetUserChoice();
-            WinnerCodes winner = DetermineWinner(chosen,userChosen);
             Console.WriteLine($"Computer choice: {Choices[chosen]}\r\nYour choice: {Choices[userChosen]}");
-            switch (winner)
+            switch (DetermineWinner(chosen, userChosen))
             {
                 case WinnerCodes.Cpu:
                     Console.WriteLine("Computer won!");
@@ -79,7 +79,6 @@ namespace ITransition_RockPaperScissors
         private static int GetUserChoice()
         {
             int chosen;
-            PrintWelcome();
             while (true)
             {
                 if(int.TryParse(Console.ReadLine(),out chosen))
